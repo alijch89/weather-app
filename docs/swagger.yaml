@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  title: Weather API
+  version: 1.1.0
+  description: API برای مدیریت اطلاعات آب‌وهوا و احراز هویت
+servers:
+  - url: http://localhost:5000
+tags:
+  - name: Weather
+    description: مدیریت آب‌وهوا
+  - name: Auth
+    description: احراز هویت کاربران
+
+paths:
+  # Weather Routes
+  /api/weather:
+    get:
+      summary: دریافت همه اطلاعات آب‌وهوا
+      tags: [Weather]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: موفقیت
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Weather"
+    post:
+      summary: ایجاد اطلاعات جدید آب‌وهوا
+      tags: [Weather]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WeatherInput"
+      responses:
+        "201":
+          description: ایجاد شد
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Weather"
+
+  /api/weather/{id}:
+    get:
+      summary: دریافت اطلاعات آب‌وهوا بر اساس ID
+      tags: [Weather]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: موفقیت
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Weather"
+    put:
+      summary: بروزرسانی اطلاعات آب‌وهوا بر اساس ID
+      tags: [Weather]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WeatherInput"
+      responses:
+        "200":
+          description: بروزرسانی شد
+    delete:
+      summary: حذف اطلاعات آب‌وهوا بر اساس ID
+      tags: [Weather]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: حذف شد
+
+  /api/weather/latest/{cityName}:
+    get:
+      summary: دریافت آخرین اطلاعات آب‌وهوا بر اساس نام شهر
+      tags: [Weather]
+      parameters:
+        - in: path
+          name: cityName
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: موفقیت
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Weather"
+
+  # Auth Routes
+  /api/auth/register:
+    post:
+      summary: ثبت نام کاربر جدید
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: کاربر ایجاد شد
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/auth/login:
+    post:
+      summary: ورود کاربر و دریافت JWT
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: ورود موفق
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Weather
+    Weather:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        cityName:
+          type: string
+        country:
+          type: string
+        temperature:
+          type: number
+          format: float
+        description:
+          type: string
+        humidity:
+          type: number
+        windSpeed:
+          type: number
+          format: float
+        fetchedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        cityCountry:
+          type: string
+      required:
+        - id
+        - cityName
+        - country
+        - temperature
+        - description
+        - fetchedAt
+        - createdAt
+        - updatedAt
+        - cityCountry
+
+    WeatherInput:
+      type: object
+      properties:
+        cityName:
+          type: string
+        country:
+          type: string
+      required:
+        - cityName
+        - country
+
+    # Auth
+    RegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time

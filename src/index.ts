@@ -2,9 +2,12 @@ import "reflect-metadata";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
-import { env } from "./config/env";
+
 import { initializeDatabase } from "./config/database";
+import { env } from "./config/env";
 import apiRoutes from "./routes/index";
 
 const app = express();
@@ -14,6 +17,10 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Swagger documentation
+const swaggerDocument = YAML.load("./docs/swagger.yaml");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use("/api", apiRoutes);
