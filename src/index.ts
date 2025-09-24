@@ -5,8 +5,7 @@ import helmet from "helmet";
 
 import { env } from "./config/env";
 import { initializeDatabase } from "./config/database";
-
-import { weatherRoutes } from "./routes/weather";
+import apiRoutes from "./routes/index";
 
 const app = express();
 
@@ -17,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/weather", weatherRoutes);
+app.use("/api", apiRoutes);
 
 const startServer = async (): Promise<void> => {
   try {
