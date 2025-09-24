@@ -9,6 +9,9 @@
    - Option A: Run PostgreSQL locally and `npm run dev`
    - Option B (recommended): Docker compose:
      docker-compose up --build
+5. Start App in Production
+    - npm run build
+    - npm start
 
 ## Endpoints
 - GET  /api/weather                -> list all records
