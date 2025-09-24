@@ -12,8 +12,6 @@ export interface WeatherData {
 }
 
 export class OpenWeatherMapService {
-  private baseUrl = "https://api.openweathermap.org/data/2.5";
-  // private baseUrl = env.openWeatherMap.baseUrl;
   private apiKey = env.openWeatherMap.apiKey;
 
   async getCurrentWeather(
