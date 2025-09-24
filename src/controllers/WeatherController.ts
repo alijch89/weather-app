@@ -36,7 +36,28 @@ export class WeatherController {
     }
   };
 
-  
+  getLatestWeatherByCity = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { cityName } = req.params;
+      const weather = await this.weatherService.getLatestWeatherByCity(
+        cityName
+      );
+
+      if (!weather) {
+        res
+          .status(404)
+          .json({ error: `No weather data found for ${cityName}` });
+        return;
+      }
+
+      res.json(weather);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch latest weather data" });
+    }
+  };
 
   createWeather = async (req: Request, res: Response): Promise<void> => {
     try {

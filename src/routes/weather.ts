@@ -6,6 +6,7 @@ const weatherController = new WeatherController();
 
 router.get("/", weatherController.getAllWeather);
 router.get("/:id", weatherController.getWeatherById);
+router.get("/latest/:cityName", weatherController.getLatestWeatherByCity);
 router.post("/", weatherController.createWeather);
 
 export { router as weatherRoutes };

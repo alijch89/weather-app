@@ -25,7 +25,27 @@ export class WeatherService {
     return this.weatherRepository.findOne({ where: { id } });
   }
 
-  
+  async getLatestWeatherByCity(cityName: string): Promise<Weather | null> {
+    const cacheKey = `weather:latest:${cityName.toLowerCase()}`;
+
+    // Try to get from cache first
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    const weather = await this.weatherRepository.findOne({
+      where: { cityName: cityName.toLowerCase() },
+      order: { fetchedAt: "DESC" },
+    });
+
+    if (weather) {
+      // Cache for 10 minutes
+      await this.redisService.set(cacheKey, JSON.stringify(weather), 600);
+    }
+
+    return weather;
+  }
 
   async createWeatherRecord(
     cityName: string,
