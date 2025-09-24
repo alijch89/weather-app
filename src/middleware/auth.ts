@@ -1,4 +1,3 @@
-// src/middleware/auth.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
@@ -41,26 +40,4 @@ export const authenticateToken = (
       next();
     }
   );
-};
-
-export const optionalAuth = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-): void => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (token) {
-    jwt.verify(
-      token,
-      env.jwt?.secret || "fallback-secret",
-      (err: any, user: any) => {
-        if (!err) {
-          req.user = user;
-        }
-      }
-    );
-  }
-  next();
 };
