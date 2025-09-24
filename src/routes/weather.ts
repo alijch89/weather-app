@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { WeatherController } from "../controllers/WeatherController";
 import { authenticateToken } from "../middleware/auth";
+import { validateCreateWeather, validateUpdateWeather } from "../middleware/validation.middleware";
 
 const router = Router();
 const weatherController = new WeatherController();
@@ -12,8 +13,8 @@ router.get(
   authenticateToken,
   weatherController.getLatestWeatherByCity
 );
-router.post("/", authenticateToken, weatherController.createWeather);
-router.put("/:id", authenticateToken, weatherController.updateWeather);
+router.post("/", validateCreateWeather, authenticateToken, weatherController.createWeather);
+router.put("/:id", validateUpdateWeather, authenticateToken, weatherController.updateWeather);
 router.delete("/:id", authenticateToken, weatherController.deleteWeather);
 
 export default router;
