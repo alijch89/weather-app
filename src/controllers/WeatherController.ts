@@ -60,7 +60,7 @@ export class WeatherController {
   };
 
   createWeather = async (req: Request, res: Response): Promise<void> => {
-    try {      
+    try {
       const { cityName, country } = req.body;
 
       if (!cityName) {
@@ -74,15 +74,19 @@ export class WeatherController {
       );
       res.status(201).json(weather);
     } catch (error: any) {
-      console.log(error);
-      
-      if (error.message.includes("not found")) {
-        res.status(404).json({ error: 'the city name is wrong' });
+      const errorMessage = error.message || "Unknown error occurred";
+
+      if (errorMessage.includes("not found")) {
+        res.status(404).json({ error: errorMessage });
       } else if (
-        error.message.includes("API key") ||
-        error.message.includes("rate limit")
+        errorMessage.includes("API key") ||
+        errorMessage.includes("rate limit")
       ) {
-        res.status(503).json({ error: error.message });
+        res.status(503).json({ error: errorMessage });
+      } else if (errorMessage.includes("Network error")) {
+        res
+          .status(503)
+          .json({ error: "Weather service is temporarily unavailable" });
       } else {
         res.status(500).json({ error: "Failed to create weather record" });
       }

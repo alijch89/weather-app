@@ -30,8 +30,21 @@ export class OpenWeatherMapService {
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error(`City not found: ${cityName}`);
+        if (response.status === 404) {
+          throw new Error(`City not found: ${cityName}`);
+        }
+        if (response.status === 401) {
+          throw new Error("Invalid OpenWeatherMap API key");
+        }
+        if (response.status === 429) {
+          throw new Error("OpenWeatherMap API rate limit exceeded");
+        }
+        if (response.status === 500) {
+          throw new Error("OpenWeatherMap API server error");
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
 
       return {
@@ -44,14 +57,11 @@ export class OpenWeatherMapService {
         fetchedAt: new Date(),
       };
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        throw new Error(`City not found: ${cityName}`);
-      }
-      if (error.response?.status === 401) {
-        throw new Error("Invalid OpenWeatherMap API key");
-      }
-      if (error.response?.status === 429) {
-        throw new Error("OpenWeatherMap API rate limit exceeded");
+      // مدیریت خطاهای شبکه
+      if (error.name === "TypeError") {
+        throw new Error(
+          "Network error: Failed to connect to OpenWeatherMap API"
+        );
       }
       throw new Error(`Failed to fetch weather data: ${error.message}`);
     }
