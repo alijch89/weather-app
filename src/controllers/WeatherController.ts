@@ -60,10 +60,7 @@ export class WeatherController {
   };
 
   createWeather = async (req: Request, res: Response): Promise<void> => {
-    try {
-
-      console.log("Request body:", req.body);
-      
+    try {      
       const { cityName, country } = req.body;
 
       if (!cityName) {
@@ -80,7 +77,7 @@ export class WeatherController {
       console.log(error);
       
       if (error.message.includes("not found")) {
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ error: 'the city name is wrong' });
       } else if (
         error.message.includes("API key") ||
         error.message.includes("rate limit")

@@ -30,7 +30,7 @@ export class OpenWeatherMapService {
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`City not found: ${cityName}`);
       }
       const data = await response.json();
 
@@ -44,8 +44,6 @@ export class OpenWeatherMapService {
         fetchedAt: new Date(),
       };
     } catch (error: any) {
-      console.log(error);
-
       if (error.response?.status === 404) {
         throw new Error(`City not found: ${cityName}`);
       }
@@ -58,5 +56,4 @@ export class OpenWeatherMapService {
       throw new Error(`Failed to fetch weather data: ${error.message}`);
     }
   }
-
 }
