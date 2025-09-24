@@ -9,6 +9,19 @@ export class WeatherController {
     this.weatherService = new WeatherService();
   }
 
+  getAllWeather = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const weatherRecords = await this.weatherService.getAllWeatherRecords();
+      res.json(weatherRecords);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch weather records" });
+    }
+  };
+
+  
+
+  
+
   createWeather = async (req: Request, res: Response): Promise<void> => {
     try {
 

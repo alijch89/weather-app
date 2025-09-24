@@ -4,6 +4,7 @@ import { WeatherController } from "../controllers/WeatherController";
 const router = Router();
 const weatherController = new WeatherController();
 
+router.get("/", weatherController.getAllWeather);
 router.post("/", weatherController.createWeather);
 
 export { router as weatherRoutes };

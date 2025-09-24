@@ -14,6 +14,16 @@ export class WeatherService {
     this.openWeatherService = new OpenWeatherMapService();
     this.redisService = new RedisService();
   }
+
+  async getAllWeatherRecords(): Promise<Weather[]> {
+    return this.weatherRepository.find({
+      order: { createdAt: "DESC" },
+    });
+  }
+
+  
+  
+
   async createWeatherRecord(
     cityName: string,
     country: string
@@ -54,4 +64,8 @@ export class WeatherService {
 
     return savedWeather;
   }
+
+  
+
+  
 }
