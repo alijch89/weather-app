@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+// @ts-ignore
 import jwt from "jsonwebtoken";
 import { validate } from "class-validator";
 import { AppDataSource } from "../config/database";

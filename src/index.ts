@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
+// @ts-ignore
 import YAML from "yamljs";
-
 
 import { initializeDatabase } from "./config/database";
 import { env } from "./config/env";
