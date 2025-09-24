@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { WeatherService } from "../services/WeatherService";
-
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
+import { Weather } from "../entities/Weather";
 
 export class WeatherController {
   private weatherService: WeatherService;
@@ -18,7 +20,21 @@ export class WeatherController {
     }
   };
 
-  
+  getWeatherById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const weather = await this.weatherService.getWeatherById(id);
+
+      if (!weather) {
+        res.status(404).json({ error: "Weather record not found" });
+        return;
+      }
+
+      res.json(weather);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch weather record" });
+    }
+  };
 
   
 

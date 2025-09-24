@@ -21,7 +21,10 @@ export class WeatherService {
     });
   }
 
-  
+  async getWeatherById(id: string): Promise<Weather | null> {
+    return this.weatherRepository.findOne({ where: { id } });
+  }
+
   
 
   async createWeatherRecord(
