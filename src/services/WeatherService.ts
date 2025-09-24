@@ -88,7 +88,39 @@ export class WeatherService {
     return savedWeather;
   }
 
-  
+  async updateWeatherRecord(
+    id: string,
+    updateData: Partial<Weather>
+  ): Promise<Weather | null> {
+    await this.weatherRepository.update(id, updateData);
+    const updatedWeather = await this.getWeatherById(id);
 
-  
+    if (updatedWeather) {
+      // Invalidate caches
+      await this.redisService.del(
+        `weather:latest:${updatedWeather.cityName.toLowerCase()}`
+      );
+      await this.redisService.del(`weather:${id}`);
+    }
+
+    return updatedWeather;
+  }
+
+  async deleteWeatherRecord(id: string): Promise<boolean> {
+    const weather = await this.getWeatherById(id);
+    if (!weather) return false;
+
+    const result = await this.weatherRepository.delete(id);
+
+    if (result.affected && result.affected > 0) {
+      // Invalidate caches
+      await this.redisService.del(
+        `weather:latest:${weather.cityName.toLowerCase()}`
+      );
+      await this.redisService.del(`weather:${id}`);
+      return true;
+    }
+
+    return false;
+  }
 }

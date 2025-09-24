@@ -92,7 +92,53 @@ export class WeatherController {
     }
   };
 
-  
+  updateWeather = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
 
-  
+      // Validate update data
+      const weatherUpdate = plainToInstance(Weather, updateData);
+      const errors = await validate(weatherUpdate, {
+        skipMissingProperties: true,
+      });
+
+      if (errors.length > 0) {
+        res.status(400).json({
+          errors: errors.map(e => Object.values(e.constraints || {})).flat(),
+        });
+        return;
+      }
+
+      const updatedWeather = await this.weatherService.updateWeatherRecord(
+        id,
+        updateData
+      );
+
+      if (!updatedWeather) {
+        res.status(404).json({ error: "Weather record not found" });
+        return;
+      }
+
+      res.json(updatedWeather);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update weather record" });
+    }
+  };
+
+  deleteWeather = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const success = await this.weatherService.deleteWeatherRecord(id);
+
+      if (!success) {
+        res.status(404).json({ error: "Weather record not found" });
+        return;
+      }
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete weather record" });
+    }
+  };
 }
